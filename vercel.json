@@ -1,8 +1,5 @@
 {
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/", "destination": "/ui/index.html" }
-  ],
   "headers": [
     {
       "source": "/(.*).md",
