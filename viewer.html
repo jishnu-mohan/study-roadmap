@@ -175,7 +175,7 @@
 </head>
 <body>
   <div class="top-bar">
-    <a href="/ui/index.html">Home</a>
+    <a href="index.html">Home</a>
     <span class="sep">/</span>
     <span class="title" id="breadcrumb">Loading...</span>
   </div>
@@ -199,7 +199,7 @@
     const file = params.get('file');
 
     if (!file) {
-      document.getElementById('content').innerHTML = '<div class="error"><h2>No file specified</h2><p><a href="/ui/index.html">Go back to dashboard</a></p></div>';
+      document.getElementById('content').innerHTML = '<div class="error"><h2>No file specified</h2><p><a href="index.html">Go back to dashboard</a></p></div>';
       document.getElementById('breadcrumb').textContent = 'Error';
     } else {
       const fileName = file.split('/').pop().replace('.md', '').replace(/^\d+-/, '').replace(/-/g, ' ');
@@ -218,7 +218,7 @@
         breaks: false
       });
 
-      fetch('../' + file)
+      fetch(file)
         .then(r => {
           if (!r.ok) throw new Error('File not found');
           return r.text();
@@ -235,7 +235,7 @@
         })
         .catch(err => {
           document.getElementById('content').innerHTML =
-            `<div class="error"><h2>Could not load file</h2><p>${file}</p><p>${err.message}</p><p><a href="/ui/index.html">Go back to dashboard</a></p></div>`;
+            `<div class="error"><h2>Could not load file</h2><p>${file}</p><p>${err.message}</p><p><a href="index.html">Go back to dashboard</a></p></div>`;
         });
     }
   </script>
