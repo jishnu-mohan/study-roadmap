@@ -10,7 +10,7 @@ A **heap** is a complete binary tree that satisfies the **heap property**:
 
 A **priority queue** is the abstract data type; a heap is the most common implementation.
 
-Python's `heapq` module implements a **min-heap**.
+In most languages, a min-heap is the default priority queue implementation.
 
 ### How It Works Internally
 
@@ -39,6 +39,59 @@ This works because the heap is a **complete** binary tree (all levels filled exc
 **Heapify (build heap from array):**
 - Naive: insert elements one by one -- O(n log n).
 - Optimal: start from the last non-leaf node and sift down each one -- **O(n)**. This is not obvious but provable: most nodes are near the bottom and sift down a small distance.
+
+```typescript
+// Min-heap operations using a custom MinPriorityQueue or a library
+// (TypeScript has no built-in heap; shown using a conceptual PriorityQueue)
+import { MinPriorityQueue, MaxPriorityQueue } from '@datastructures-js/priority-queue';
+
+const nums: number[] = [3, 1, 4, 1, 5];
+const minHeap = new MinPriorityQueue<number>();
+for (const n of nums) {
+    minHeap.enqueue(n);               // O(log n)
+}
+minHeap.enqueue(2);                   // O(log n)
+const smallest: number = minHeap.dequeue(); // O(log n) -- returns and removes min
+
+// Max-heap
+const maxHeap = new MaxPriorityQueue<number>();
+for (const n of [3, 1, 4, 1, 5]) {
+    maxHeap.enqueue(n);
+}
+const largest: number = maxHeap.dequeue();
+
+// Top K smallest -- push all, pop K times
+const topK: number[] = [];
+for (let i = 0; i < 3; i++) {
+    topK.push(minHeap.dequeue());     // O(n log k) overall
+}
+```
+
+```java
+import java.util.*;
+
+// Min-heap operations
+int[] numsArr = {3, 1, 4, 1, 5};
+PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+for (int n : numsArr) {
+    minHeap.offer(n);                  // O(log n)
+}
+minHeap.offer(2);                      // O(log n)
+int smallest = minHeap.poll();         // O(log n) -- returns and removes min
+
+// Max-heap using reversed comparator
+PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+for (int n : new int[]{3, 1, 4, 1, 5}) {
+    maxHeap.offer(n);
+}
+int largest = maxHeap.poll();
+
+// Top K smallest -- push all, pop K times
+List<Integer> topK = new ArrayList<>();
+for (int i = 0; i < 3; i++) {
+    topK.add(minHeap.poll());          // O(n log k) overall
+}
+```
 
 ```python
 import heapq
@@ -69,7 +122,7 @@ top_3 = heapq.nlargest(3, nums)
 | Pop (extract min/max) | O(log n) |
 | Peek (get min/max) | O(1) |
 | Search | O(n) -- heap is not optimized for search |
-| Push + Pop combined | O(log n) -- `heapq.heappushpop` |
+| Push + Pop combined | O(log n) |
 
 ### When to Use It
 
@@ -106,6 +159,62 @@ top_3 = heapq.nlargest(3, nums)
 - Approach: Min-heap storing (value, list_index, node). Pop smallest, push its next.
 - Time: O(n log k) where n is total elements, k is number of lists.
 - Key insight: the heap always has at most K elements, so each operation is O(log k).
+
+```typescript
+function mergeKLists(lists: Array<ListNode | null>): ListNode | null {
+    // Min-heap entries: [value, listIndex, node]
+    const heap = new MinPriorityQueue<[number, number, ListNode]>({
+        compare: (a, b) => a[0] - b[0],
+    });
+    for (let i = 0; i < lists.length; i++) {
+        if (lists[i] !== null) {
+            heap.enqueue([lists[i]!.val, i, lists[i]!]);
+        }
+    }
+    const dummy = new ListNode(0);
+    let current = dummy;
+    while (!heap.isEmpty()) {
+        const [val, i, node] = heap.dequeue();
+        current.next = node;
+        current = current.next;
+        if (node.next !== null) {
+            heap.enqueue([node.next.val, i, node.next]);
+        }
+    }
+    return dummy.next;
+}
+```
+
+```java
+import java.util.*;
+
+public ListNode mergeKLists(ListNode[] lists) {
+    // Min-heap entries: [value, listIndex, node]
+    PriorityQueue<int[]> heap = new PriorityQueue<>((a, b) -> a[0] - b[0]);
+    // Store nodes separately since PriorityQueue needs comparable entries
+    Map<Integer, ListNode> nodeMap = new HashMap<>();
+    int id = 0;
+    for (int i = 0; i < lists.length; i++) {
+        if (lists[i] != null) {
+            heap.offer(new int[]{lists[i].val, id});
+            nodeMap.put(id++, lists[i]);
+        }
+    }
+    ListNode dummy = new ListNode(0);
+    ListNode current = dummy;
+    while (!heap.isEmpty()) {
+        int[] entry = heap.poll();
+        ListNode node = nodeMap.remove(entry[1]);
+        current.next = node;
+        current = current.next;
+        if (node.next != null) {
+            heap.offer(new int[]{node.next.val, id});
+            nodeMap.put(id++, node.next);
+        }
+    }
+    return dummy.next;
+}
+```
 
 ```python
 import heapq

@@ -17,7 +17,81 @@ When a new element violates the monotonic property, pop elements from the stack 
 popped elements have found their "answer" (the new element). This ensures each element
 is pushed and popped at most once, giving O(n) total time instead of O(n^2) brute force.
 
-### Python Code Template
+### Code Template
+
+```typescript
+// Next greater element pattern (monotonically decreasing stack)
+function nextGreater(nums: number[]): number[] {
+    const n = nums.length;
+    const result: number[] = new Array(n).fill(-1);
+    const stack: number[] = [];  // stores indices
+
+    for (let i = 0; i < n; i++) {
+        while (stack.length > 0 && nums[i] > nums[stack[stack.length - 1]]) {
+            const idx = stack.pop()!;
+            result[idx] = nums[i];
+        }
+        stack.push(i);
+    }
+
+    return result;
+}
+
+// Next smaller element pattern (monotonically increasing stack)
+function nextSmaller(nums: number[]): number[] {
+    const n = nums.length;
+    const result: number[] = new Array(n).fill(-1);
+    const stack: number[] = [];
+
+    for (let i = 0; i < n; i++) {
+        while (stack.length > 0 && nums[i] < nums[stack[stack.length - 1]]) {
+            const idx = stack.pop()!;
+            result[idx] = nums[i];
+        }
+        stack.push(i);
+    }
+
+    return result;
+}
+```
+
+```java
+// Next greater element pattern (monotonically decreasing stack)
+public int[] nextGreater(int[] nums) {
+    int n = nums.length;
+    int[] result = new int[n];
+    Arrays.fill(result, -1);
+    ArrayDeque<Integer> stack = new ArrayDeque<>();  // stores indices
+
+    for (int i = 0; i < n; i++) {
+        while (!stack.isEmpty() && nums[i] > nums[stack.peek()]) {
+            int idx = stack.pop();
+            result[idx] = nums[i];
+        }
+        stack.push(i);
+    }
+
+    return result;
+}
+
+// Next smaller element pattern (monotonically increasing stack)
+public int[] nextSmaller(int[] nums) {
+    int n = nums.length;
+    int[] result = new int[n];
+    Arrays.fill(result, -1);
+    ArrayDeque<Integer> stack = new ArrayDeque<>();
+
+    for (int i = 0; i < n; i++) {
+        while (!stack.isEmpty() && nums[i] < nums[stack.peek()]) {
+            int idx = stack.pop();
+            result[idx] = nums[i];
+        }
+        stack.push(i);
+    }
+
+    return result;
+}
+```
 
 ```python
 # Next greater element pattern (monotonically decreasing stack)
@@ -52,6 +126,42 @@ def next_smaller(nums):
 ### Classic Example Walkthrough: Daily Temperatures (LC 739)
 
 **Problem:** Given daily temperatures, return how many days you have to wait for a warmer temperature. If no future day is warmer, put 0.
+
+```typescript
+function dailyTemperatures(temperatures: number[]): number[] {
+    const n = temperatures.length;
+    const result: number[] = new Array(n).fill(0);
+    const stack: number[] = [];  // stack of indices, temperatures in decreasing order
+
+    for (let i = 0; i < n; i++) {
+        while (stack.length > 0 && temperatures[i] > temperatures[stack[stack.length - 1]]) {
+            const prevIdx = stack.pop()!;
+            result[prevIdx] = i - prevIdx;
+        }
+        stack.push(i);
+    }
+
+    return result;
+}
+```
+
+```java
+public int[] dailyTemperatures(int[] temperatures) {
+    int n = temperatures.length;
+    int[] result = new int[n];
+    ArrayDeque<Integer> stack = new ArrayDeque<>();  // stack of indices, temperatures in decreasing order
+
+    for (int i = 0; i < n; i++) {
+        while (!stack.isEmpty() && temperatures[i] > temperatures[stack.peek()]) {
+            int prevIdx = stack.pop();
+            result[prevIdx] = i - prevIdx;
+        }
+        stack.push(i);
+    }
+
+    return result;
+}
+```
 
 ```python
 def dailyTemperatures(temperatures):

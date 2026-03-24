@@ -19,7 +19,88 @@ visited at most twice (once by each pointer).
 Fixed-size windows move both pointers together; variable-size windows expand right
 freely and contract left only when needed.
 
-### Python Code Template
+### Code Template
+
+```typescript
+// Variable-size sliding window
+function slidingWindow(s: string): number {
+    let left = 0;
+    const window: Map<string, number> = new Map(); // or any state tracker
+    let result = 0;
+
+    for (let right = 0; right < s.length; right++) {
+        // Expand: add s[right] to window state
+        window.set(s[right], (window.get(s[right]) ?? 0) + 1);
+
+        // Shrink: while window is invalid, remove s[left]
+        while (windowIsInvalid(window)) {
+            window.set(s[left], window.get(s[left])! - 1);
+            if (window.get(s[left]) === 0) {
+                window.delete(s[left]);
+            }
+            left++;
+        }
+
+        // Update result
+        result = Math.max(result, right - left + 1);
+    }
+
+    return result;
+}
+
+// Fixed-size sliding window
+function fixedWindow(nums: number[], k: number): number {
+    let windowSum = nums.slice(0, k).reduce((a, b) => a + b, 0);
+    let result = windowSum;
+    for (let right = k; right < nums.length; right++) {
+        windowSum += nums[right] - nums[right - k];
+        result = Math.max(result, windowSum);
+    }
+    return result;
+}
+```
+
+```java
+// Variable-size sliding window
+public int slidingWindow(String s) {
+    int left = 0;
+    Map<Character, Integer> window = new HashMap<>(); // or any state tracker
+    int result = 0;
+
+    for (int right = 0; right < s.length(); right++) {
+        // Expand: add s[right] to window state
+        window.merge(s.charAt(right), 1, Integer::sum);
+
+        // Shrink: while window is invalid, remove s[left]
+        while (windowIsInvalid(window)) {
+            window.merge(s.charAt(left), -1, Integer::sum);
+            if (window.get(s.charAt(left)) == 0) {
+                window.remove(s.charAt(left));
+            }
+            left++;
+        }
+
+        // Update result
+        result = Math.max(result, right - left + 1);
+    }
+
+    return result;
+}
+
+// Fixed-size sliding window
+public int fixedWindow(int[] nums, int k) {
+    int windowSum = 0;
+    for (int i = 0; i < k; i++) {
+        windowSum += nums[i];
+    }
+    int result = windowSum;
+    for (int right = k; right < nums.length; right++) {
+        windowSum += nums[right] - nums[right - k];
+        result = Math.max(result, windowSum);
+    }
+    return result;
+}
+```
 
 ```python
 # Variable-size sliding window
@@ -57,6 +138,43 @@ def fixed_window(nums, k):
 ### Classic Example Walkthrough: Longest Substring Without Repeating Characters (LC 3)
 
 **Problem:** Find the length of the longest substring without repeating characters.
+
+```typescript
+function lengthOfLongestSubstring(s: string): number {
+    const charIndex: Map<string, number> = new Map(); // char -> its latest index
+    let left = 0;
+    let result = 0;
+
+    for (let right = 0; right < s.length; right++) {
+        if (charIndex.has(s[right]) && charIndex.get(s[right])! >= left) {
+            left = charIndex.get(s[right])! + 1;
+        }
+        charIndex.set(s[right], right);
+        result = Math.max(result, right - left + 1);
+    }
+
+    return result;
+}
+```
+
+```java
+public int lengthOfLongestSubstring(String s) {
+    Map<Character, Integer> charIndex = new HashMap<>(); // char -> its latest index
+    int left = 0;
+    int result = 0;
+
+    for (int right = 0; right < s.length(); right++) {
+        char c = s.charAt(right);
+        if (charIndex.containsKey(c) && charIndex.get(c) >= left) {
+            left = charIndex.get(c) + 1;
+        }
+        charIndex.put(c, right);
+        result = Math.max(result, right - left + 1);
+    }
+
+    return result;
+}
+```
 
 ```python
 def lengthOfLongestSubstring(s):

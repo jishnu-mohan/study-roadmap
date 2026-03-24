@@ -67,6 +67,22 @@ A **hash set** is the same structure but stores only keys (no values). Use it wh
 
 1. **Frequency counting** -- `collections.Counter` in Python or manual counting with a dict.
 
+```typescript
+// frequency counting
+const freq: Map<number, number> = new Map();
+for (const x of arr) {
+    freq.set(x, (freq.get(x) ?? 0) + 1);
+}
+```
+
+```java
+// frequency counting
+Map<Integer, Integer> freq = new HashMap<>();
+for (int x : arr) {
+    freq.merge(x, 1, Integer::sum);
+}
+```
+
 ```python
 from collections import Counter
 freq = Counter(arr)  # {element: count}
@@ -75,6 +91,39 @@ freq = Counter(arr)  # {element: count}
 2. **Two-pass vs one-pass**: Two Sum can be solved in two passes (build map, then check) or one pass (check and build simultaneously). One-pass is cleaner.
 
 3. **Prefix sum + hash map**: For "subarray sum equals K", store prefix sums in a hash map. At each index, check if `current_prefix_sum - K` exists in the map.
+
+```typescript
+function subarraySum(nums: number[], k: number): number {
+    let count = 0;
+    let prefix = 0;
+    const seen: Map<number, number> = new Map([[0, 1]]); // prefix_sum -> number of times seen
+    for (const num of nums) {
+        prefix += num;
+        if (seen.has(prefix - k)) {
+            count += seen.get(prefix - k)!;
+        }
+        seen.set(prefix, (seen.get(prefix) ?? 0) + 1);
+    }
+    return count;
+}
+```
+
+```java
+public int subarraySum(int[] nums, int k) {
+    int count = 0;
+    int prefix = 0;
+    Map<Integer, Integer> seen = new HashMap<>(); // prefix_sum -> number of times seen
+    seen.put(0, 1);
+    for (int num : nums) {
+        prefix += num;
+        if (seen.containsKey(prefix - k)) {
+            count += seen.get(prefix - k);
+        }
+        seen.merge(prefix, 1, Integer::sum);
+    }
+    return count;
+}
+```
 
 ```python
 def subarray_sum(nums, k):
@@ -96,6 +145,33 @@ def subarray_sum(nums, k):
 **Group Anagrams** (LeetCode 49)
 - Approach: Use sorted string as key (or a tuple of character counts). Group all strings with the same key.
 - Key insight: two strings are anagrams if and only if their sorted forms are identical.
+
+```typescript
+function groupAnagrams(strs: string[]): string[][] {
+    const groups: Map<string, string[]> = new Map();
+    for (const s of strs) {
+        const key = s.split("").sort().join("");
+        if (!groups.has(key)) {
+            groups.set(key, []);
+        }
+        groups.get(key)!.push(s);
+    }
+    return Array.from(groups.values());
+}
+```
+
+```java
+public List<List<String>> groupAnagrams(String[] strs) {
+    Map<String, List<String>> groups = new HashMap<>();
+    for (String s : strs) {
+        char[] chars = s.toCharArray();
+        Arrays.sort(chars);
+        String key = new String(chars);
+        groups.computeIfAbsent(key, k -> new ArrayList<>()).add(s);
+    }
+    return new ArrayList<>(groups.values());
+}
+```
 
 ```python
 from collections import defaultdict

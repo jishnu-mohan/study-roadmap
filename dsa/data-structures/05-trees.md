@@ -15,6 +15,37 @@ A **tree** is a hierarchical data structure with a root node and subtrees of chi
 
 ### How It Works Internally
 
+```typescript
+class TreeNode {
+    val: number;
+    left: TreeNode | null;
+    right: TreeNode | null;
+    constructor(val: number = 0, left: TreeNode | null = null, right: TreeNode | null = null) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+```
+
+```java
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+    TreeNode(int val) {
+        this.val = val;
+        this.left = null;
+        this.right = null;
+    }
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
+```
+
 ```python
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
@@ -36,6 +67,91 @@ class TreeNode:
 | Preorder (Node, L, R) | Root first | Serialize a tree, copy a tree |
 | Postorder (L, R, Node) | Children first | Delete a tree, compute heights, evaluate expressions |
 | Level-order (BFS) | Level by level | Find depth, level-based operations, shortest path in tree |
+
+```typescript
+// Recursive traversals
+function inorder(node: TreeNode | null): number[] {
+    if (node === null) return [];
+    return [...inorder(node.left), node.val, ...inorder(node.right)];
+}
+
+function preorder(node: TreeNode | null): number[] {
+    if (node === null) return [];
+    return [node.val, ...preorder(node.left), ...preorder(node.right)];
+}
+
+function postorder(node: TreeNode | null): number[] {
+    if (node === null) return [];
+    return [...postorder(node.left), ...postorder(node.right), node.val];
+}
+
+// Iterative level-order (BFS)
+function levelOrder(root: TreeNode | null): number[][] {
+    if (root === null) return [];
+    const result: number[][] = [];
+    const queue: TreeNode[] = [root];
+    while (queue.length > 0) {
+        const level: number[] = [];
+        const size = queue.length;
+        for (let i = 0; i < size; i++) {
+            const node = queue.shift()!;
+            level.push(node.val);
+            if (node.left !== null) queue.push(node.left);
+            if (node.right !== null) queue.push(node.right);
+        }
+        result.push(level);
+    }
+    return result;
+}
+```
+
+```java
+// Recursive traversals
+public List<Integer> inorder(TreeNode node) {
+    if (node == null) return new ArrayList<>();
+    List<Integer> result = new ArrayList<>(inorder(node.left));
+    result.add(node.val);
+    result.addAll(inorder(node.right));
+    return result;
+}
+
+public List<Integer> preorder(TreeNode node) {
+    if (node == null) return new ArrayList<>();
+    List<Integer> result = new ArrayList<>();
+    result.add(node.val);
+    result.addAll(preorder(node.left));
+    result.addAll(preorder(node.right));
+    return result;
+}
+
+public List<Integer> postorder(TreeNode node) {
+    if (node == null) return new ArrayList<>();
+    List<Integer> result = new ArrayList<>(postorder(node.left));
+    result.addAll(postorder(node.right));
+    result.add(node.val);
+    return result;
+}
+
+// Iterative level-order (BFS)
+public List<List<Integer>> levelOrder(TreeNode root) {
+    if (root == null) return new ArrayList<>();
+    List<List<Integer>> result = new ArrayList<>();
+    Queue<TreeNode> queue = new ArrayDeque<>();
+    queue.add(root);
+    while (!queue.isEmpty()) {
+        List<Integer> level = new ArrayList<>();
+        int size = queue.size();
+        for (int i = 0; i < size; i++) {
+            TreeNode node = queue.poll();
+            level.add(node.val);
+            if (node.left != null) queue.add(node.left);
+            if (node.right != null) queue.add(node.right);
+        }
+        result.add(level);
+    }
+    return result;
+}
+```
 
 ```python
 # Recursive traversals
@@ -75,6 +191,42 @@ def level_order(root):
 ```
 
 **Iterative inorder** (important to know -- interviewers sometimes ask for non-recursive):
+
+```typescript
+function inorderIterative(root: TreeNode | null): number[] {
+    const result: number[] = [];
+    const stack: TreeNode[] = [];
+    let current = root;
+    while (current !== null || stack.length > 0) {
+        while (current !== null) {
+            stack.push(current);
+            current = current.left;
+        }
+        current = stack.pop()!;
+        result.push(current.val);
+        current = current.right;
+    }
+    return result;
+}
+```
+
+```java
+public List<Integer> inorderIterative(TreeNode root) {
+    List<Integer> result = new ArrayList<>();
+    Deque<TreeNode> stack = new ArrayDeque<>();
+    TreeNode current = root;
+    while (current != null || !stack.isEmpty()) {
+        while (current != null) {
+            stack.push(current);
+            current = current.left;
+        }
+        current = stack.pop();
+        result.add(current.val);
+        current = current.right;
+    }
+    return result;
+}
+```
 
 ```python
 def inorder_iterative(root):
@@ -132,6 +284,32 @@ def inorder_iterative(root):
 - Approach: Recursive with min/max bounds. Each node must be within `(low, high)`. Go left: update `high = node.val`. Go right: update `low = node.val`.
 - Alternative: inorder traversal should produce strictly increasing values.
 - Key insight: it is NOT enough to just check `left.val < node.val < right.val` -- you must check against the entire valid range.
+
+```typescript
+function isValidBST(
+    root: TreeNode | null,
+    low: number = -Infinity,
+    high: number = Infinity
+): boolean {
+    if (root === null) return true;
+    if (root.val <= low || root.val >= high) return false;
+    return isValidBST(root.left, low, root.val) &&
+           isValidBST(root.right, root.val, high);
+}
+```
+
+```java
+public boolean isValidBST(TreeNode root) {
+    return isValidBST(root, Long.MIN_VALUE, Long.MAX_VALUE);
+}
+
+private boolean isValidBST(TreeNode root, long low, long high) {
+    if (root == null) return true;
+    if (root.val <= low || root.val >= high) return false;
+    return isValidBST(root.left, low, root.val) &&
+           isValidBST(root.right, root.val, high);
+}
+```
 
 ```python
 def is_valid_bst(root, low=float('-inf'), high=float('inf')):

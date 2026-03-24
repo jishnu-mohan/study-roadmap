@@ -18,7 +18,91 @@ Bottom-up (tabulation) fills a table iteratively -- often more space-efficient a
 recursion overhead. The critical step is defining the **state** (what changes between
 subproblems) and the **transition** (how states relate to each other).
 
-### Python Code Template
+### Code Template
+
+```typescript
+// Top-down (memoization)
+function solveTopDown(params: number[]): number {
+    const memo: Map<number, number> = new Map();
+
+    function dp(state: number): number {
+        // Base case
+        if (baseCondition(state)) {
+            return baseValue;
+        }
+        if (memo.has(state)) {
+            return memo.get(state)!;
+        }
+
+        // Transition: try all choices, pick optimal
+        let result = initialValue;  // Infinity for min, 0 for count, etc.
+        for (const choice of getChoices(state)) {
+            result = combine(result, dp(nextState(state, choice)));
+        }
+        memo.set(state, result);
+        return result;
+    }
+
+    return dp(initialState);
+}
+
+// Bottom-up (tabulation)
+function solveBottomUp(params: number[]): number {
+    const n = params.length;
+    const dp: number[] = new Array(n + 1).fill(initialValue);
+    dp[0] = baseValue;  // base case
+
+    for (let i = 1; i <= n; i++) {
+        for (const choice of getChoices(i)) {
+            dp[i] = combine(dp[i], dp[prevState(i, choice)]);
+        }
+    }
+
+    return dp[n];
+}
+```
+
+```java
+// Top-down (memoization)
+public int solveTopDown(int[] params) {
+    Map<Integer, Integer> memo = new HashMap<>();
+    return dp(initialState, params, memo);
+}
+
+private int dp(int state, int[] params, Map<Integer, Integer> memo) {
+    // Base case
+    if (baseCondition(state)) {
+        return baseValue;
+    }
+    if (memo.containsKey(state)) {
+        return memo.get(state);
+    }
+
+    // Transition: try all choices, pick optimal
+    int result = initialValue;  // Integer.MAX_VALUE for min, 0 for count, etc.
+    for (int choice : getChoices(state)) {
+        result = combine(result, dp(nextState(state, choice), params, memo));
+    }
+    memo.put(state, result);
+    return result;
+}
+
+// Bottom-up (tabulation)
+public int solveBottomUp(int[] params) {
+    int n = params.length;
+    int[] dp = new int[n + 1];
+    Arrays.fill(dp, initialValue);
+    dp[0] = baseValue;  // base case
+
+    for (int i = 1; i <= n; i++) {
+        for (int choice : getChoices(i)) {
+            dp[i] = combine(dp[i], dp[prevState(i, choice)]);
+        }
+    }
+
+    return dp[n];
+}
+```
 
 ```python
 # Top-down (memoization)
@@ -55,6 +139,43 @@ def solve_bottom_up(params):
 ### Classic Example Walkthrough: Coin Change (LC 322)
 
 **Problem:** Find the fewest number of coins to make up a given amount. Return -1 if impossible.
+
+```typescript
+// Bottom-up approach
+function coinChange(coins: number[], amount: number): number {
+    const dp: number[] = new Array(amount + 1).fill(Infinity);
+    dp[0] = 0;  // 0 coins needed for amount 0
+
+    for (let a = 1; a <= amount; a++) {
+        for (const coin of coins) {
+            if (coin <= a && dp[a - coin] !== Infinity) {
+                dp[a] = Math.min(dp[a], dp[a - coin] + 1);
+            }
+        }
+    }
+
+    return dp[amount] !== Infinity ? dp[amount] : -1;
+}
+```
+
+```java
+// Bottom-up approach
+public int coinChange(int[] coins, int amount) {
+    int[] dp = new int[amount + 1];
+    Arrays.fill(dp, Integer.MAX_VALUE);
+    dp[0] = 0;  // 0 coins needed for amount 0
+
+    for (int a = 1; a <= amount; a++) {
+        for (int coin : coins) {
+            if (coin <= a && dp[a - coin] != Integer.MAX_VALUE) {
+                dp[a] = Math.min(dp[a], dp[a - coin] + 1);
+            }
+        }
+    }
+
+    return dp[amount] != Integer.MAX_VALUE ? dp[amount] : -1;
+}
+```
 
 ```python
 # Bottom-up approach

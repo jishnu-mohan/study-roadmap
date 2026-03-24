@@ -16,7 +16,77 @@ speeds) and move them toward each other or in the same direction based on a cond
 This eliminates the need for nested loops and reduces O(n^2) brute force to O(n).
 The fast-slow variant detects cycles by having one pointer move twice as fast.
 
-### Python Code Template
+### Code Template
+
+```typescript
+// Opposite-direction two pointers (sorted array)
+function twoSumSorted(nums: number[], target: number): number[] {
+    let left = 0;
+    let right = nums.length - 1;
+    while (left < right) {
+        const currentSum = nums[left] + nums[right];
+        if (currentSum === target) {
+            return [left, right];
+        } else if (currentSum < target) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    return [];
+}
+
+// Fast-slow pointers (cycle detection)
+interface ListNode {
+    val: number;
+    next: ListNode | null;
+}
+
+function hasCycle(head: ListNode | null): boolean {
+    let slow = head;
+    let fast = head;
+    while (fast !== null && fast.next !== null) {
+        slow = slow!.next;
+        fast = fast.next.next;
+        if (slow === fast) {
+            return true;
+        }
+    }
+    return false;
+}
+```
+
+```java
+// Opposite-direction two pointers (sorted array)
+public int[] twoSumSorted(int[] nums, int target) {
+    int left = 0, right = nums.length - 1;
+    while (left < right) {
+        int currentSum = nums[left] + nums[right];
+        if (currentSum == target) {
+            return new int[]{left, right};
+        } else if (currentSum < target) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    return new int[]{};
+}
+
+// Fast-slow pointers (cycle detection)
+// Assumes: class ListNode { int val; ListNode next; }
+public boolean hasCycle(ListNode head) {
+    ListNode slow = head, fast = head;
+    while (fast != null && fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow == fast) {
+            return true;
+        }
+    }
+    return false;
+}
+```
 
 ```python
 # Opposite-direction two pointers (sorted array)
@@ -48,6 +118,75 @@ def has_cycle(head):
 **Problem:** Find all unique triplets in the array that sum to zero.
 
 **Approach:** Sort the array. Fix one element, then use two pointers on the rest.
+
+```typescript
+function threeSum(nums: number[]): number[][] {
+    nums.sort((a, b) => a - b);
+    const result: number[][] = [];
+    for (let i = 0; i < nums.length - 2; i++) {
+        // Skip duplicate for the fixed element
+        if (i > 0 && nums[i] === nums[i - 1]) {
+            continue;
+        }
+        let left = i + 1;
+        let right = nums.length - 1;
+        while (left < right) {
+            const total = nums[i] + nums[left] + nums[right];
+            if (total === 0) {
+                result.push([nums[i], nums[left], nums[right]]);
+                // Skip duplicates for left and right
+                while (left < right && nums[left] === nums[left + 1]) {
+                    left++;
+                }
+                while (left < right && nums[right] === nums[right - 1]) {
+                    right--;
+                }
+                left++;
+                right--;
+            } else if (total < 0) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    return result;
+}
+```
+
+```java
+public List<List<Integer>> threeSum(int[] nums) {
+    Arrays.sort(nums);
+    List<List<Integer>> result = new ArrayList<>();
+    for (int i = 0; i < nums.length - 2; i++) {
+        // Skip duplicate for the fixed element
+        if (i > 0 && nums[i] == nums[i - 1]) {
+            continue;
+        }
+        int left = i + 1, right = nums.length - 1;
+        while (left < right) {
+            int total = nums[i] + nums[left] + nums[right];
+            if (total == 0) {
+                result.add(Arrays.asList(nums[i], nums[left], nums[right]));
+                // Skip duplicates for left and right
+                while (left < right && nums[left] == nums[left + 1]) {
+                    left++;
+                }
+                while (left < right && nums[right] == nums[right - 1]) {
+                    right--;
+                }
+                left++;
+                right--;
+            } else if (total < 0) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    return result;
+}
+```
 
 ```python
 def threeSum(nums):

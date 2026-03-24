@@ -16,7 +16,52 @@ through, using the relationship between the current interval and the previous on
 (or a running state) to merge, count overlaps, or detect gaps. Many interval problems
 reduce to a sweep-line approach or a sort-and-compare pattern.
 
-### Python Code Template
+### Code Template
+
+```typescript
+function intervalTemplate(intervals: number[][]): number[][] {
+    intervals.sort((a, b) => a[0] - b[0]);  // sort by start
+    const result: number[][] = [intervals[0]];
+
+    for (let i = 1; i < intervals.length; i++) {
+        const current = intervals[i];
+        const last = result[result.length - 1];
+
+        if (current[0] <= last[1]) {
+            // Overlap: merge or handle
+            last[1] = Math.max(last[1], current[1]);
+        } else {
+            // No overlap: add to result
+            result.push(current);
+        }
+    }
+
+    return result;
+}
+```
+
+```java
+public int[][] intervalTemplate(int[][] intervals) {
+    Arrays.sort(intervals, (a, b) -> a[0] - b[0]);  // sort by start
+    List<int[]> result = new ArrayList<>();
+    result.add(intervals[0]);
+
+    for (int i = 1; i < intervals.length; i++) {
+        int[] current = intervals[i];
+        int[] last = result.get(result.size() - 1);
+
+        if (current[0] <= last[1]) {
+            // Overlap: merge or handle
+            last[1] = Math.max(last[1], current[1]);
+        } else {
+            // No overlap: add to result
+            result.add(current);
+        }
+    }
+
+    return result.toArray(new int[result.size()][]);
+}
+```
 
 ```python
 def interval_template(intervals):
@@ -40,6 +85,41 @@ def interval_template(intervals):
 ### Classic Example Walkthrough: Merge Intervals (LC 56)
 
 **Problem:** Merge all overlapping intervals.
+
+```typescript
+function merge(intervals: number[][]): number[][] {
+    intervals.sort((a, b) => a[0] - b[0]);
+    const merged: number[][] = [intervals[0]];
+
+    for (let i = 1; i < intervals.length; i++) {
+        if (intervals[i][0] <= merged[merged.length - 1][1]) {
+            merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], intervals[i][1]);
+        } else {
+            merged.push(intervals[i]);
+        }
+    }
+
+    return merged;
+}
+```
+
+```java
+public int[][] merge(int[][] intervals) {
+    Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+    List<int[]> merged = new ArrayList<>();
+    merged.add(intervals[0]);
+
+    for (int i = 1; i < intervals.length; i++) {
+        if (intervals[i][0] <= merged.get(merged.size() - 1)[1]) {
+            merged.get(merged.size() - 1)[1] = Math.max(merged.get(merged.size() - 1)[1], intervals[i][1]);
+        } else {
+            merged.add(intervals[i]);
+        }
+    }
+
+    return merged.toArray(new int[merged.size()][]);
+}
+```
 
 ```python
 def merge(intervals):

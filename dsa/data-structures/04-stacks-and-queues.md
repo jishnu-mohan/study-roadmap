@@ -26,6 +26,26 @@ Both are abstract data types that can be implemented with arrays or linked lists
 - O(1) append and pop from both ends.
 - This is what you should use for queues in Python.
 
+```typescript
+// Using array as a simple deque (for small datasets)
+// For production, use a proper deque library
+const q: number[] = [];
+q.push(1);        // enqueue at right
+q.unshift(2);     // enqueue at left
+q.pop();           // dequeue from right
+q.shift();         // dequeue from left
+```
+
+```java
+import java.util.ArrayDeque;
+
+ArrayDeque<Integer> q = new ArrayDeque<>();
+q.addLast(1);      // enqueue at right
+q.addFirst(2);     // enqueue at left
+q.removeLast();     // dequeue from right
+q.removeFirst();    // dequeue from left
+```
+
 ```python
 from collections import deque
 q = deque()
@@ -64,6 +84,42 @@ q.popleft()       # dequeue from left
 
 1. **Matching parentheses** -- push opening brackets, pop on closing brackets, check match:
 
+```typescript
+function isValid(s: string): boolean {
+    const stack: string[] = [];
+    const pairs: Map<string, string> = new Map([[")", "("], ["]", "["], ["}", "{"]]);
+    for (const char of s) {
+        if (["(", "[", "{"].includes(char)) {
+            stack.push(char);
+        } else if (pairs.has(char)) {
+            if (stack.length === 0 || stack[stack.length - 1] !== pairs.get(char)) {
+                return false;
+            }
+            stack.pop();
+        }
+    }
+    return stack.length === 0;
+}
+```
+
+```java
+public boolean isValid(String s) {
+    Deque<Character> stack = new ArrayDeque<>();
+    Map<Character, Character> pairs = Map.of(')', '(', ']', '[', '}', '{');
+    for (char c : s.toCharArray()) {
+        if (c == '(' || c == '[' || c == '{') {
+            stack.push(c);
+        } else if (pairs.containsKey(c)) {
+            if (stack.isEmpty() || stack.peek() != pairs.get(c)) {
+                return false;
+            }
+            stack.pop();
+        }
+    }
+    return stack.isEmpty();
+}
+```
+
 ```python
 def is_valid(s):
     stack = []
@@ -79,6 +135,38 @@ def is_valid(s):
 ```
 
 2. **Monotonic stack** -- maintains a stack where elements are in increasing (or decreasing) order. Used for "next greater element" type problems:
+
+```typescript
+function dailyTemperatures(temperatures: number[]): number[] {
+    const n = temperatures.length;
+    const result: number[] = new Array(n).fill(0);
+    const stack: number[] = []; // stores indices
+    for (let i = 0; i < n; i++) {
+        while (stack.length > 0 && temperatures[i] > temperatures[stack[stack.length - 1]]) {
+            const prevIdx = stack.pop()!;
+            result[prevIdx] = i - prevIdx;
+        }
+        stack.push(i);
+    }
+    return result;
+}
+```
+
+```java
+public int[] dailyTemperatures(int[] temperatures) {
+    int n = temperatures.length;
+    int[] result = new int[n];
+    Deque<Integer> stack = new ArrayDeque<>(); // stores indices
+    for (int i = 0; i < n; i++) {
+        while (!stack.isEmpty() && temperatures[i] > temperatures[stack.peek()]) {
+            int prevIdx = stack.pop();
+            result[prevIdx] = i - prevIdx;
+        }
+        stack.push(i);
+    }
+    return result;
+}
+```
 
 ```python
 def daily_temperatures(temperatures):
@@ -99,6 +187,64 @@ The key idea: the stack holds indices of elements waiting for a "resolution" (th
    - Stack `in_stack` for enqueue (just push).
    - Stack `out_stack` for dequeue (if empty, pour all of `in_stack` into it by popping).
    - Amortized O(1) per operation because each element is moved at most twice.
+
+```typescript
+class MyQueue {
+    private inStack: number[] = [];
+    private outStack: number[] = [];
+
+    push(x: number): void {
+        this.inStack.push(x);
+    }
+
+    pop(): number {
+        this.move();
+        return this.outStack.pop()!;
+    }
+
+    peek(): number {
+        this.move();
+        return this.outStack[this.outStack.length - 1];
+    }
+
+    private move(): void {
+        if (this.outStack.length === 0) {
+            while (this.inStack.length > 0) {
+                this.outStack.push(this.inStack.pop()!);
+            }
+        }
+    }
+}
+```
+
+```java
+class MyQueue {
+    private Deque<Integer> inStack = new ArrayDeque<>();
+    private Deque<Integer> outStack = new ArrayDeque<>();
+
+    public void push(int x) {
+        inStack.push(x);
+    }
+
+    public int pop() {
+        move();
+        return outStack.pop();
+    }
+
+    public int peek() {
+        move();
+        return outStack.peek();
+    }
+
+    private void move() {
+        if (outStack.isEmpty()) {
+            while (!inStack.isEmpty()) {
+                outStack.push(inStack.pop());
+            }
+        }
+    }
+}
+```
 
 ```python
 class MyQueue:

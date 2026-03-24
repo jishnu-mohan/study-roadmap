@@ -10,6 +10,92 @@ Unlike a hash map of strings (which gives O(L) lookup where L is string length),
 
 ### How It Works Internally
 
+```typescript
+class TrieNode {
+    children: Map<string, TrieNode> = new Map();  // char -> TrieNode
+    isEnd: boolean = false;  // marks end of a complete word
+}
+
+class Trie {
+    private root: TrieNode = new TrieNode();
+
+    insert(word: string): void {
+        let node = this.root;
+        for (const char of word) {
+            if (!node.children.has(char)) {
+                node.children.set(char, new TrieNode());
+            }
+            node = node.children.get(char)!;
+        }
+        node.isEnd = true;
+    }
+
+    search(word: string): boolean {
+        const node = this.findNode(word);
+        return node !== null && node.isEnd;
+    }
+
+    startsWith(prefix: string): boolean {
+        return this.findNode(prefix) !== null;
+    }
+
+    private findNode(prefix: string): TrieNode | null {
+        let node = this.root;
+        for (const char of prefix) {
+            if (!node.children.has(char)) {
+                return null;
+            }
+            node = node.children.get(char)!;
+        }
+        return node;
+    }
+}
+```
+
+```java
+import java.util.*;
+
+class TrieNode {
+    Map<Character, TrieNode> children = new HashMap<>();  // char -> TrieNode
+    boolean isEnd = false;  // marks end of a complete word
+}
+
+class Trie {
+    private TrieNode root = new TrieNode();
+
+    public void insert(String word) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            if (!node.children.containsKey(c)) {
+                node.children.put(c, new TrieNode());
+            }
+            node = node.children.get(c);
+        }
+        node.isEnd = true;
+    }
+
+    public boolean search(String word) {
+        TrieNode node = findNode(word);
+        return node != null && node.isEnd;
+    }
+
+    public boolean startsWith(String prefix) {
+        return findNode(prefix) != null;
+    }
+
+    private TrieNode findNode(String prefix) {
+        TrieNode node = root;
+        for (char c : prefix.toCharArray()) {
+            if (!node.children.containsKey(c)) {
+                return null;
+            }
+            node = node.children.get(c);
+        }
+        return node;
+    }
+}
+```
+
 ```python
 class TrieNode:
     def __init__(self):

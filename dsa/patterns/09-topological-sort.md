@@ -17,7 +17,161 @@ ordering is possible. Kahn's algorithm (BFS-based) processes nodes with in-degre
 first and is often preferred because it naturally detects cycles (if not all nodes are
 processed, a cycle exists).
 
-### Python Code Template
+### Code Template
+
+```typescript
+// Kahn's Algorithm (BFS-based topological sort)
+function topologicalSortBfs(numNodes: number, edges: number[][]): number[] {
+    const graph: Map<number, number[]> = new Map();
+    const inDegree: number[] = new Array(numNodes).fill(0);
+
+    for (const [u, v] of edges) {
+        if (!graph.has(u)) graph.set(u, []);
+        graph.get(u)!.push(v);
+        inDegree[v]++;
+    }
+
+    const queue: number[] = [];
+    for (let i = 0; i < numNodes; i++) {
+        if (inDegree[i] === 0) queue.push(i);
+    }
+    const order: number[] = [];
+
+    while (queue.length > 0) {
+        const node = queue.shift()!;
+        order.push(node);
+        for (const neighbor of graph.get(node) ?? []) {
+            inDegree[neighbor]--;
+            if (inDegree[neighbor] === 0) {
+                queue.push(neighbor);
+            }
+        }
+    }
+
+    if (order.length === numNodes) {
+        return order;   // valid topological order
+    } else {
+        return [];      // cycle detected
+    }
+}
+
+// DFS-based topological sort
+function topologicalSortDfs(numNodes: number, edges: number[][]): number[] {
+    const graph: Map<number, number[]> = new Map();
+    for (const [u, v] of edges) {
+        if (!graph.has(u)) graph.set(u, []);
+        graph.get(u)!.push(v);
+    }
+
+    const WHITE = 0, GRAY = 1, BLACK = 2;
+    const color: number[] = new Array(numNodes).fill(WHITE);
+    const order: number[] = [];
+    let hasCycle = false;
+
+    function dfs(node: number): void {
+        if (hasCycle) return;
+        color[node] = GRAY;
+        for (const neighbor of graph.get(node) ?? []) {
+            if (color[neighbor] === GRAY) {
+                hasCycle = true;
+                return;
+            }
+            if (color[neighbor] === WHITE) {
+                dfs(neighbor);
+            }
+        }
+        color[node] = BLACK;
+        order.push(node);
+    }
+
+    for (let i = 0; i < numNodes; i++) {
+        if (color[i] === WHITE) {
+            dfs(i);
+        }
+    }
+
+    if (hasCycle) return [];
+    return order.reverse();  // reverse post-order
+}
+```
+
+```java
+// Kahn's Algorithm (BFS-based topological sort)
+public List<Integer> topologicalSortBfs(int numNodes, int[][] edges) {
+    Map<Integer, List<Integer>> graph = new HashMap<>();
+    int[] inDegree = new int[numNodes];
+
+    for (int[] edge : edges) {
+        graph.computeIfAbsent(edge[0], k -> new ArrayList<>()).add(edge[1]);
+        inDegree[edge[1]]++;
+    }
+
+    ArrayDeque<Integer> queue = new ArrayDeque<>();
+    for (int i = 0; i < numNodes; i++) {
+        if (inDegree[i] == 0) queue.add(i);
+    }
+    List<Integer> order = new ArrayList<>();
+
+    while (!queue.isEmpty()) {
+        int node = queue.poll();
+        order.add(node);
+        for (int neighbor : graph.getOrDefault(node, Collections.emptyList())) {
+            inDegree[neighbor]--;
+            if (inDegree[neighbor] == 0) {
+                queue.add(neighbor);
+            }
+        }
+    }
+
+    if (order.size() == numNodes) {
+        return order;   // valid topological order
+    } else {
+        return new ArrayList<>();  // cycle detected
+    }
+}
+
+// DFS-based topological sort
+public List<Integer> topologicalSortDfs(int numNodes, int[][] edges) {
+    Map<Integer, List<Integer>> graph = new HashMap<>();
+    for (int[] edge : edges) {
+        graph.computeIfAbsent(edge[0], k -> new ArrayList<>()).add(edge[1]);
+    }
+
+    int WHITE = 0, GRAY = 1, BLACK = 2;
+    int[] color = new int[numNodes];
+    List<Integer> order = new ArrayList<>();
+    boolean[] hasCycle = {false};
+
+    // DFS helper
+    // Uses hasCycle array for mutability in nested scope
+    java.util.function.IntConsumer[] dfs = new java.util.function.IntConsumer[1];
+    dfs[0] = (int node) -> {
+        if (hasCycle[0]) return;
+        color[node] = GRAY;
+        for (int neighbor : graph.getOrDefault(node, Collections.emptyList())) {
+            if (color[neighbor] == GRAY) {
+                hasCycle[0] = true;
+                return;
+            }
+            if (color[neighbor] == WHITE) {
+                dfs[0].accept(neighbor);
+            }
+        }
+        color[node] = BLACK;
+        order.add(node);
+    };
+
+    for (int i = 0; i < numNodes; i++) {
+        if (color[i] == WHITE) {
+            dfs[0].accept(i);
+        }
+    }
+
+    if (hasCycle[0]) return new ArrayList<>();
+    Collections.reverse(order);  // reverse post-order
+    return order;
+}
+```
 
 ```python
 from collections import deque, defaultdict
@@ -84,6 +238,69 @@ def topological_sort_dfs(num_nodes, edges):
 ### Classic Example Walkthrough: Course Schedule II (LC 210)
 
 **Problem:** Given numCourses and prerequisites, return the ordering of courses. Return empty if impossible.
+
+```typescript
+function findOrder(numCourses: number, prerequisites: number[][]): number[] {
+    const graph: Map<number, number[]> = new Map();
+    const inDegree: number[] = new Array(numCourses).fill(0);
+
+    for (const [course, prereq] of prerequisites) {
+        if (!graph.has(prereq)) graph.set(prereq, []);
+        graph.get(prereq)!.push(course);
+        inDegree[course]++;
+    }
+
+    const queue: number[] = [];
+    for (let i = 0; i < numCourses; i++) {
+        if (inDegree[i] === 0) queue.push(i);
+    }
+    const order: number[] = [];
+
+    while (queue.length > 0) {
+        const course = queue.shift()!;
+        order.push(course);
+        for (const nextCourse of graph.get(course) ?? []) {
+            inDegree[nextCourse]--;
+            if (inDegree[nextCourse] === 0) {
+                queue.push(nextCourse);
+            }
+        }
+    }
+
+    return order.length === numCourses ? order : [];
+}
+```
+
+```java
+public int[] findOrder(int numCourses, int[][] prerequisites) {
+    Map<Integer, List<Integer>> graph = new HashMap<>();
+    int[] inDegree = new int[numCourses];
+
+    for (int[] pair : prerequisites) {
+        graph.computeIfAbsent(pair[1], k -> new ArrayList<>()).add(pair[0]);
+        inDegree[pair[0]]++;
+    }
+
+    ArrayDeque<Integer> queue = new ArrayDeque<>();
+    for (int i = 0; i < numCourses; i++) {
+        if (inDegree[i] == 0) queue.add(i);
+    }
+    List<Integer> order = new ArrayList<>();
+
+    while (!queue.isEmpty()) {
+        int course = queue.poll();
+        order.add(course);
+        for (int nextCourse : graph.getOrDefault(course, Collections.emptyList())) {
+            inDegree[nextCourse]--;
+            if (inDegree[nextCourse] == 0) {
+                queue.add(nextCourse);
+            }
+        }
+    }
+
+    return order.size() == numCourses ? order.stream().mapToInt(i -> i).toArray() : new int[0];
+}
+```
 
 ```python
 def findOrder(numCourses, prerequisites):

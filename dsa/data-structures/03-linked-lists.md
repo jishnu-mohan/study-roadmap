@@ -11,6 +11,32 @@ A **linked list** is a linear data structure where each element (node) contains 
 
 ### How It Works Internally
 
+```typescript
+class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val: number = 0, next: ListNode | null = null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+```
+
+```java
+class ListNode {
+    int val;
+    ListNode next;
+    ListNode(int val) {
+        this.val = val;
+        this.next = null;
+    }
+    ListNode(int val, ListNode next) {
+        this.val = val;
+        this.next = next;
+    }
+}
+```
+
 ```python
 class ListNode:
     def __init__(self, val=0, next=None):
@@ -56,6 +82,44 @@ class ListNode:
 
 1. **Sentinel (dummy) node** -- create a dummy head to simplify edge cases (empty list, insert at head, etc.):
 
+```typescript
+function mergeTwoLists(l1: ListNode | null, l2: ListNode | null): ListNode | null {
+    const dummy = new ListNode(0);
+    let current = dummy;
+    while (l1 !== null && l2 !== null) {
+        if (l1.val <= l2.val) {
+            current.next = l1;
+            l1 = l1.next;
+        } else {
+            current.next = l2;
+            l2 = l2.next;
+        }
+        current = current.next!;
+    }
+    current.next = l1 ?? l2;
+    return dummy.next;
+}
+```
+
+```java
+public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+    ListNode dummy = new ListNode(0);
+    ListNode current = dummy;
+    while (l1 != null && l2 != null) {
+        if (l1.val <= l2.val) {
+            current.next = l1;
+            l1 = l1.next;
+        } else {
+            current.next = l2;
+            l2 = l2.next;
+        }
+        current = current.next;
+    }
+    current.next = (l1 != null) ? l1 : l2;
+    return dummy.next;
+}
+```
+
 ```python
 def merge_two_lists(l1, l2):
     dummy = ListNode(0)
@@ -78,6 +142,34 @@ def merge_two_lists(l1, l2):
    - **Find cycle start**: after they meet, move one pointer to head and advance both by 1. They meet at the cycle start.
 
 3. **Reverse a linked list** (iterative -- you must be able to write this in your sleep):
+
+```typescript
+function reverseList(head: ListNode | null): ListNode | null {
+    let prev: ListNode | null = null;
+    let current = head;
+    while (current !== null) {
+        const nextNode = current.next; // save
+        current.next = prev;           // reverse
+        prev = current;                // advance
+        current = nextNode;            // advance
+    }
+    return prev;
+}
+```
+
+```java
+public ListNode reverseList(ListNode head) {
+    ListNode prev = null;
+    ListNode current = head;
+    while (current != null) {
+        ListNode nextNode = current.next; // save
+        current.next = prev;              // reverse
+        prev = current;                   // advance
+        current = nextNode;               // advance
+    }
+    return prev;
+}
+```
 
 ```python
 def reverse_list(head):

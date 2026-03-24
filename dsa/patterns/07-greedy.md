@@ -17,7 +17,39 @@ consequences. Unlike DP, greedy does not revisit or reconsider decisions. The ch
 is proving that the greedy choice is correct (exchange argument or by contradiction).
 If you suspect greedy but cannot prove correctness, consider DP instead.
 
-### Python Code Template
+### Code Template
+
+```typescript
+// General greedy pattern
+function greedySolve(items: number[][]): number {
+    items.sort((a, b) => someCriterion(a) - someCriterion(b));  // sort by greedy priority
+    let result: number = initialValue;
+
+    for (const item of items) {
+        if (canInclude(item, result)) {
+            result = update(result, item);
+        }
+    }
+
+    return result;
+}
+```
+
+```java
+// General greedy pattern
+public int greedySolve(int[][] items) {
+    Arrays.sort(items, (a, b) -> someCriterion(a) - someCriterion(b));  // sort by greedy priority
+    int result = initialValue;
+
+    for (int[] item : items) {
+        if (canInclude(item, result)) {
+            result = update(result, item);
+        }
+    }
+
+    return result;
+}
+```
 
 ```python
 # General greedy pattern
@@ -35,6 +67,54 @@ def greedy_solve(items):
 ### Classic Example Walkthrough: Jump Game II (LC 45)
 
 **Problem:** Minimum number of jumps to reach the last index. Each element is the max jump length.
+
+```typescript
+function jump(nums: number[]): number {
+    let jumps = 0;
+    let currentEnd = 0;    // farthest index reachable with current number of jumps
+    let farthest = 0;      // farthest index reachable overall
+
+    for (let i = 0; i < nums.length - 1; i++) {  // don't process the last index
+        farthest = Math.max(farthest, i + nums[i]);
+
+        if (i === currentEnd) {
+            // Must make a jump
+            jumps++;
+            currentEnd = farthest;
+
+            if (currentEnd >= nums.length - 1) {
+                break;
+            }
+        }
+    }
+
+    return jumps;
+}
+```
+
+```java
+public int jump(int[] nums) {
+    int jumps = 0;
+    int currentEnd = 0;    // farthest index reachable with current number of jumps
+    int farthest = 0;      // farthest index reachable overall
+
+    for (int i = 0; i < nums.length - 1; i++) {  // don't process the last index
+        farthest = Math.max(farthest, i + nums[i]);
+
+        if (i == currentEnd) {
+            // Must make a jump
+            jumps++;
+            currentEnd = farthest;
+
+            if (currentEnd >= nums.length - 1) {
+                break;
+            }
+        }
+    }
+
+    return jumps;
+}
+```
 
 ```python
 def jump(nums):

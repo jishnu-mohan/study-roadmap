@@ -15,6 +15,43 @@ A **graph** is a collection of **vertices** (nodes) and **edges** (connections b
 
 **Adjacency List** (most common in interviews):
 
+```typescript
+// Using a Map of arrays
+const graph: Map<string, string[]> = new Map([
+    ['A', ['B', 'C']],
+    ['B', ['A', 'D']],
+    ['C', ['A']],
+    ['D', ['B']],
+]);
+
+// Building from edge list
+const graph2 = new Map<string, string[]>();
+for (const [u, v] of edges) {
+    if (!graph2.has(u)) graph2.set(u, []);
+    if (!graph2.has(v)) graph2.set(v, []);
+    graph2.get(u)!.push(v);
+    graph2.get(v)!.push(u);  // omit for directed graph
+}
+```
+
+```java
+import java.util.*;
+
+// Using a HashMap of lists
+Map<String, List<String>> graph = new HashMap<>();
+graph.put("A", new ArrayList<>(List.of("B", "C")));
+graph.put("B", new ArrayList<>(List.of("A", "D")));
+graph.put("C", new ArrayList<>(List.of("A")));
+graph.put("D", new ArrayList<>(List.of("B")));
+
+// Building from edge list
+Map<String, List<String>> graph2 = new HashMap<>();
+for (int[] edge : edges) {
+    graph2.computeIfAbsent(edge[0], k -> new ArrayList<>()).add(edge[1]);
+    graph2.computeIfAbsent(edge[1], k -> new ArrayList<>()).add(edge[0]); // omit for directed graph
+}
+```
+
 ```python
 # Using a dictionary of lists
 graph = {
@@ -33,6 +70,24 @@ for u, v in edges:
 ```
 
 **Adjacency Matrix:**
+
+```typescript
+// n x n matrix where matrix[i][j] = 1 (or weight) if edge exists
+const matrix: number[][] = Array.from({ length: n }, () => new Array(n).fill(0));
+for (const [u, v] of edges) {
+    matrix[u][v] = 1;
+    matrix[v][u] = 1;  // omit for directed
+}
+```
+
+```java
+// n x n matrix where matrix[i][j] = 1 (or weight) if edge exists
+int[][] matrix = new int[n][n];
+for (int[] edge : edges) {
+    matrix[edge[0]][edge[1]] = 1;
+    matrix[edge[1]][edge[0]] = 1;  // omit for directed
+}
+```
 
 ```python
 # n x n matrix where matrix[i][j] = 1 (or weight) if edge exists
@@ -79,6 +134,43 @@ for u, v in edges:
 
 1. **BFS (shortest path in unweighted graph):**
 
+```typescript
+function bfs(graph: Map<string, string[]>, start: string): void {
+    const visited = new Set<string>([start]);
+    const queue: string[] = [start];
+    let front = 0;
+    while (front < queue.length) {
+        const node = queue[front++];
+        for (const neighbor of graph.get(node) ?? []) {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                queue.push(neighbor);
+            }
+        }
+    }
+}
+```
+
+```java
+import java.util.*;
+
+public void bfs(Map<String, List<String>> graph, String start) {
+    Set<String> visited = new HashSet<>();
+    visited.add(start);
+    ArrayDeque<String> queue = new ArrayDeque<>();
+    queue.offer(start);
+    while (!queue.isEmpty()) {
+        String node = queue.poll();
+        for (String neighbor : graph.getOrDefault(node, List.of())) {
+            if (!visited.contains(neighbor)) {
+                visited.add(neighbor);
+                queue.offer(neighbor);
+            }
+        }
+    }
+}
+```
+
 ```python
 from collections import deque
 def bfs(graph, start):
@@ -94,6 +186,28 @@ def bfs(graph, start):
 
 2. **DFS (connectivity, cycle detection):**
 
+```typescript
+function dfs(graph: Map<string, string[]>, node: string, visited: Set<string>): void {
+    visited.add(node);
+    for (const neighbor of graph.get(node) ?? []) {
+        if (!visited.has(neighbor)) {
+            dfs(graph, neighbor, visited);
+        }
+    }
+}
+```
+
+```java
+public void dfs(Map<String, List<String>> graph, String node, Set<String> visited) {
+    visited.add(node);
+    for (String neighbor : graph.getOrDefault(node, List.of())) {
+        if (!visited.contains(neighbor)) {
+            dfs(graph, neighbor, visited);
+        }
+    }
+}
+```
+
 ```python
 def dfs(graph, node, visited):
     visited.add(node)
@@ -103,6 +217,66 @@ def dfs(graph, node, visited):
 ```
 
 3. **Grid as graph** -- for island problems, treat each cell as a node with 4 neighbors:
+
+```typescript
+function numIslands(grid: string[][]): number {
+    if (grid.length === 0) return 0;
+    const rows = grid.length;
+    const cols = grid[0].length;
+    let count = 0;
+
+    function dfs(r: number, c: number): void {
+        if (r < 0 || r >= rows || c < 0 || c >= cols || grid[r][c] === '0') {
+            return;
+        }
+        grid[r][c] = '0';  // mark visited
+        dfs(r + 1, c);
+        dfs(r - 1, c);
+        dfs(r, c + 1);
+        dfs(r, c - 1);
+    }
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if (grid[r][c] === '1') {
+                count++;
+                dfs(r, c);
+            }
+        }
+    }
+    return count;
+}
+```
+
+```java
+public int numIslands(char[][] grid) {
+    if (grid.length == 0) return 0;
+    int rows = grid.length;
+    int cols = grid[0].length;
+    int count = 0;
+
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+            if (grid[r][c] == '1') {
+                count++;
+                dfs(grid, r, c, rows, cols);
+            }
+        }
+    }
+    return count;
+}
+
+private void dfs(char[][] grid, int r, int c, int rows, int cols) {
+    if (r < 0 || r >= rows || c < 0 || c >= cols || grid[r][c] == '0') {
+        return;
+    }
+    grid[r][c] = '0';  // mark visited
+    dfs(grid, r + 1, c, rows, cols);
+    dfs(grid, r - 1, c, rows, cols);
+    dfs(grid, r, c + 1, rows, cols);
+    dfs(grid, r, c - 1, rows, cols);
+}
+```
 
 ```python
 def num_islands(grid):
@@ -130,6 +304,74 @@ def num_islands(grid):
 
 4. **Topological sort** (Kahn's algorithm -- BFS-based):
 
+```typescript
+function topologicalSort(numNodes: number, edges: number[][]): number[] {
+    const graph = new Map<number, number[]>();
+    const inDegree: number[] = new Array(numNodes).fill(0);
+    for (const [u, v] of edges) {
+        if (!graph.has(u)) graph.set(u, []);
+        graph.get(u)!.push(v);
+        inDegree[v]++;
+    }
+
+    const queue: number[] = [];
+    for (let i = 0; i < numNodes; i++) {
+        if (inDegree[i] === 0) queue.push(i);
+    }
+    let front = 0;
+    const order: number[] = [];
+    while (front < queue.length) {
+        const node = queue[front++];
+        order.push(node);
+        for (const neighbor of graph.get(node) ?? []) {
+            inDegree[neighbor]--;
+            if (inDegree[neighbor] === 0) {
+                queue.push(neighbor);
+            }
+        }
+    }
+
+    if (order.length !== numNodes) {
+        return [];  // cycle detected
+    }
+    return order;
+}
+```
+
+```java
+import java.util.*;
+
+public List<Integer> topologicalSort(int numNodes, int[][] edges) {
+    Map<Integer, List<Integer>> graph = new HashMap<>();
+    int[] inDegree = new int[numNodes];
+    for (int[] edge : edges) {
+        graph.computeIfAbsent(edge[0], k -> new ArrayList<>()).add(edge[1]);
+        inDegree[edge[1]]++;
+    }
+
+    ArrayDeque<Integer> queue = new ArrayDeque<>();
+    for (int i = 0; i < numNodes; i++) {
+        if (inDegree[i] == 0) queue.offer(i);
+    }
+    List<Integer> order = new ArrayList<>();
+    while (!queue.isEmpty()) {
+        int node = queue.poll();
+        order.add(node);
+        for (int neighbor : graph.getOrDefault(node, List.of())) {
+            inDegree[neighbor]--;
+            if (inDegree[neighbor] == 0) {
+                queue.offer(neighbor);
+            }
+        }
+    }
+
+    if (order.size() != numNodes) {
+        return List.of();  // cycle detected
+    }
+    return order;
+}
+```
+
 ```python
 from collections import deque, defaultdict
 def topological_sort(num_nodes, edges):
@@ -155,6 +397,61 @@ def topological_sort(num_nodes, edges):
 ```
 
 5. **Dijkstra's algorithm** (shortest path in weighted graph with non-negative weights):
+
+```typescript
+function dijkstra(graph: Map<string, [string, number][]>, start: string): Map<string, number> {
+    // graph.get(u) = [[v, weight], ...]
+    const dist = new Map<string, number>([[start, 0]]);
+    // Min-heap: [distance, node]
+    const heap = new MinPriorityQueue<[number, string]>({ compare: (a, b) => a[0] - b[0] });
+    heap.enqueue([0, start]);
+    while (!heap.isEmpty()) {
+        const [d, u] = heap.dequeue();
+        if (d > (dist.get(u) ?? Infinity)) {
+            continue;  // stale entry
+        }
+        for (const [v, weight] of graph.get(u) ?? []) {
+            const newDist = d + weight;
+            if (newDist < (dist.get(v) ?? Infinity)) {
+                dist.set(v, newDist);
+                heap.enqueue([newDist, v]);
+            }
+        }
+    }
+    return dist;
+}
+```
+
+```java
+import java.util.*;
+
+public Map<String, Integer> dijkstra(Map<String, List<int[]>> graph, String start) {
+    // graph.get(u) = [[v_index, weight], ...]
+    Map<String, Integer> dist = new HashMap<>();
+    dist.put(start, 0);
+    // Min-heap: [distance, node]
+    PriorityQueue<Object[]> heap = new PriorityQueue<>((a, b) -> (int) a[0] - (int) b[0]);
+    heap.offer(new Object[]{0, start});
+    while (!heap.isEmpty()) {
+        Object[] entry = heap.poll();
+        int d = (int) entry[0];
+        String u = (String) entry[1];
+        if (d > dist.getOrDefault(u, Integer.MAX_VALUE)) {
+            continue;  // stale entry
+        }
+        for (int[] edge : graph.getOrDefault(u, List.of())) {
+            String v = String.valueOf(edge[0]);
+            int weight = edge[1];
+            int newDist = d + weight;
+            if (newDist < dist.getOrDefault(v, Integer.MAX_VALUE)) {
+                dist.put(v, newDist);
+                heap.offer(new Object[]{newDist, v});
+            }
+        }
+    }
+    return dist;
+}
+```
 
 ```python
 import heapq

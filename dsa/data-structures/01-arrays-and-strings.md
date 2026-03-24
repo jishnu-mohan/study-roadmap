@@ -25,6 +25,32 @@ In Python specifically:
 
 **String immutability trap**:
 
+```typescript
+// BAD -- O(n^2) because each += creates a new string
+let s = "";
+for (const char of characters) {
+    s += char;
+}
+
+// GOOD -- O(n) total
+s = characters.join("");
+```
+
+```java
+// BAD -- O(n^2) because each += creates a new string
+String s = "";
+for (char c : characters) {
+    s += c;
+}
+
+// GOOD -- O(n) total
+StringBuilder sb = new StringBuilder();
+for (char c : characters) {
+    sb.append(c);
+}
+s = sb.toString();
+```
+
 ```python
 # BAD -- O(n^2) because each += creates a new string
 s = ""

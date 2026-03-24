@@ -17,7 +17,107 @@ Standard binary search works on sorted arrays. "Search on answer space" applies 
 search to the result domain -- guess an answer, check feasibility, and narrow the range.
 The key insight is that binary search works whenever there is a monotonic predicate.
 
-### Python Code Template
+### Code Template
+
+```typescript
+// Standard binary search
+function binarySearch(nums: number[], target: number): number {
+    let left = 0;
+    let right = nums.length - 1;
+    while (left <= right) {
+        const mid = left + Math.floor((right - left) / 2);
+        if (nums[mid] === target) {
+            return mid;
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return -1;
+}
+
+// Binary search on answer space (find minimum valid answer)
+function searchOnAnswer(lo: number, hi: number): number {
+    while (lo < hi) {
+        const mid = lo + Math.floor((hi - lo) / 2);
+        if (isFeasible(mid)) {
+            hi = mid;        // mid could be the answer, search left
+        } else {
+            lo = mid + 1;    // mid is too small
+        }
+    }
+    return lo;
+}
+
+// Find leftmost (first) occurrence
+function findLeft(nums: number[], target: number): number {
+    let left = 0;
+    let right = nums.length - 1;
+    let result = -1;
+    while (left <= right) {
+        const mid = left + Math.floor((right - left) / 2);
+        if (nums[mid] === target) {
+            result = mid;
+            right = mid - 1;  // keep searching left
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return result;
+}
+```
+
+```java
+// Standard binary search
+public int binarySearch(int[] nums, int target) {
+    int left = 0, right = nums.length - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] == target) {
+            return mid;
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return -1;
+}
+
+// Binary search on answer space (find minimum valid answer)
+public int searchOnAnswer(int lo, int hi) {
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (isFeasible(mid)) {
+            hi = mid;        // mid could be the answer, search left
+        } else {
+            lo = mid + 1;    // mid is too small
+        }
+    }
+    return lo;
+}
+
+// Find leftmost (first) occurrence
+public int findLeft(int[] nums, int target) {
+    int left = 0, right = nums.length - 1;
+    int result = -1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] == target) {
+            result = mid;
+            right = mid - 1;  // keep searching left
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return result;
+}
+```
 
 ```python
 # Standard binary search
@@ -62,6 +162,69 @@ def find_left(nums, target):
 ### Classic Example Walkthrough: Search in Rotated Sorted Array (LC 33)
 
 **Problem:** Search for a target in a sorted array that has been rotated at some pivot.
+
+```typescript
+function search(nums: number[], target: number): number {
+    let left = 0;
+    let right = nums.length - 1;
+
+    while (left <= right) {
+        const mid = left + Math.floor((right - left) / 2);
+        if (nums[mid] === target) {
+            return mid;
+        }
+
+        // Left half is sorted
+        if (nums[left] <= nums[mid]) {
+            if (nums[left] <= target && target < nums[mid]) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        // Right half is sorted
+        } else {
+            if (nums[mid] < target && target <= nums[right]) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+    }
+
+    return -1;
+}
+```
+
+```java
+public int search(int[] nums, int target) {
+    int left = 0, right = nums.length - 1;
+
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (nums[mid] == target) {
+            return mid;
+        }
+
+        // Left half is sorted
+        if (nums[left] <= nums[mid]) {
+            if (nums[left] <= target && target < nums[mid]) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        // Right half is sorted
+        } else {
+            if (nums[mid] < target && target <= nums[right]) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+    }
+
+    return -1;
+}
+```
 
 ```python
 def search(nums, target):

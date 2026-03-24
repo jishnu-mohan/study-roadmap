@@ -15,6 +15,91 @@ It answers the question: "Are x and y in the same group?" in nearly O(1) time.
 
 **Core idea**: represent each set as a tree. Each element points to a parent. The root of the tree is the representative of the set.
 
+```typescript
+class UnionFind {
+    private parent: number[];
+    private rank: number[];
+
+    constructor(n: number) {
+        this.parent = Array.from({ length: n }, (_, i) => i);  // each element is its own parent
+        this.rank = new Array(n).fill(0);                      // rank for union by rank
+    }
+
+    find(x: number): number {
+        if (this.parent[x] !== x) {
+            this.parent[x] = this.find(this.parent[x]);  // path compression
+        }
+        return this.parent[x];
+    }
+
+    union(x: number, y: number): boolean {
+        const rootX = this.find(x);
+        const rootY = this.find(y);
+        if (rootX === rootY) {
+            return false;  // already in same set
+        }
+        // Union by rank
+        if (this.rank[rootX] < this.rank[rootY]) {
+            this.parent[rootX] = rootY;
+        } else if (this.rank[rootX] > this.rank[rootY]) {
+            this.parent[rootY] = rootX;
+        } else {
+            this.parent[rootY] = rootX;
+            this.rank[rootX]++;
+        }
+        return true;
+    }
+
+    connected(x: number, y: number): boolean {
+        return this.find(x) === this.find(y);
+    }
+}
+```
+
+```java
+class UnionFind {
+    private int[] parent;
+    private int[] rank;
+
+    public UnionFind(int n) {
+        parent = new int[n];
+        rank = new int[n];  // rank for union by rank
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;  // each element is its own parent
+        }
+    }
+
+    public int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);  // path compression
+        }
+        return parent[x];
+    }
+
+    public boolean union(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+        if (rootX == rootY) {
+            return false;  // already in same set
+        }
+        // Union by rank
+        if (rank[rootX] < rank[rootY]) {
+            parent[rootX] = rootY;
+        } else if (rank[rootX] > rank[rootY]) {
+            parent[rootY] = rootX;
+        } else {
+            parent[rootY] = rootX;
+            rank[rootX]++;
+        }
+        return true;
+    }
+
+    public boolean connected(int x, int y) {
+        return find(x) == find(y);
+    }
+}
+```
+
 ```python
 class UnionFind:
     def __init__(self, n):
@@ -82,6 +167,61 @@ class UnionFind:
 ### Common Interview Patterns
 
 1. **Connected components count**: Initialize with n components. Each successful union reduces count by 1.
+
+```typescript
+class UnionFindWithCount {
+    private parent: number[];
+    private rank: number[];
+    count: number;  // number of connected components
+
+    constructor(n: number) {
+        this.parent = Array.from({ length: n }, (_, i) => i);
+        this.rank = new Array(n).fill(0);
+        this.count = n;
+    }
+
+    // find() with path compression (same as above)
+
+    union(x: number, y: number): void {
+        const rootX = this.find(x);
+        const rootY = this.find(y);
+        if (rootX === rootY) {
+            return;
+        }
+        // ... union by rank ...
+        this.count--;
+    }
+}
+```
+
+```java
+class UnionFindWithCount {
+    private int[] parent;
+    private int[] rank;
+    int count;  // number of connected components
+
+    public UnionFindWithCount(int n) {
+        parent = new int[n];
+        rank = new int[n];
+        count = n;
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+        }
+    }
+
+    // find() with path compression (same as above)
+
+    public void union(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+        if (rootX == rootY) {
+            return;
+        }
+        // ... union by rank ...
+        count--;
+    }
+}
+```
 
 ```python
 class UnionFind:

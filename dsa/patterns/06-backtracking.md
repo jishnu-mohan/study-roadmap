@@ -16,7 +16,69 @@ then undo the choice (backtrack). Pruning eliminates branches early when they ca
 lead to a valid solution, dramatically reducing the search space. The template follows
 the choose-explore-unchoose pattern.
 
-### Python Code Template
+### Code Template
+
+```typescript
+function backtrack(result: number[][], current: number[], choices: number[], start: number): void {
+    // Base case: valid solution found
+    if (isComplete(current)) {
+        result.push([...current]);  // append a copy
+        return;
+    }
+
+    for (let i = start; i < choices.length; i++) {
+        // Pruning: skip invalid choices
+        if (!isValid(choices[i], current)) {
+            continue;
+        }
+
+        // Choose
+        current.push(choices[i]);
+
+        // Explore (i+1 for combinations, i for reuse, 0 for permutations)
+        backtrack(result, current, choices, i + 1);
+
+        // Unchoose (backtrack)
+        current.pop();
+    }
+}
+
+// Usage
+const result: number[][] = [];
+backtrack(result, [], choices, 0);
+return result;
+```
+
+```java
+public void backtrack(List<List<Integer>> result, List<Integer> current, int[] choices, int start) {
+    // Base case: valid solution found
+    if (isComplete(current)) {
+        result.add(new ArrayList<>(current));  // append a copy
+        return;
+    }
+
+    for (int i = start; i < choices.length; i++) {
+        // Pruning: skip invalid choices
+        if (!isValid(choices[i], current)) {
+            continue;
+        }
+
+        // Choose
+        current.add(choices[i]);
+
+        // Explore (i+1 for combinations, i for reuse, 0 for permutations)
+        backtrack(result, current, choices, i + 1);
+
+        // Unchoose (backtrack)
+        current.remove(current.size() - 1);
+    }
+}
+
+// Usage
+List<List<Integer>> result = new ArrayList<>();
+backtrack(result, new ArrayList<>(), choices, 0);
+return result;
+```
 
 ```python
 def backtrack(result, current, choices, start):
@@ -48,6 +110,43 @@ return result
 ### Classic Example Walkthrough: Subsets (LC 78)
 
 **Problem:** Given a set of distinct integers, return all possible subsets.
+
+```typescript
+function subsets(nums: number[]): number[][] {
+    const result: number[][] = [];
+
+    function backtrack(start: number, current: number[]): void {
+        result.push([...current]);  // every state is a valid subset
+
+        for (let i = start; i < nums.length; i++) {
+            current.push(nums[i]);
+            backtrack(i + 1, current);
+            current.pop();
+        }
+    }
+
+    backtrack(0, []);
+    return result;
+}
+```
+
+```java
+public List<List<Integer>> subsets(int[] nums) {
+    List<List<Integer>> result = new ArrayList<>();
+    backtrack(nums, 0, new ArrayList<>(), result);
+    return result;
+}
+
+private void backtrack(int[] nums, int start, List<Integer> current, List<List<Integer>> result) {
+    result.add(new ArrayList<>(current));  // every state is a valid subset
+
+    for (int i = start; i < nums.length; i++) {
+        current.add(nums[i]);
+        backtrack(nums, i + 1, current, result);
+        current.remove(current.size() - 1);
+    }
+}
+```
 
 ```python
 def subsets(nums):

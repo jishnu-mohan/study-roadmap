@@ -19,6 +19,66 @@ specific bit positions. Bitmasks can represent subsets of a set efficiently.
 
 ### Key Operations Reference
 
+```typescript
+// Check if bit at position i is set
+(n >> i) & 1
+
+// Set bit at position i
+n | (1 << i)
+
+// Clear bit at position i
+n & ~(1 << i)
+
+// Toggle bit at position i
+n ^ (1 << i)
+
+// Check if power of two
+n > 0 && (n & (n - 1)) === 0
+
+// Count set bits (Brian Kernighan)
+let count = 0;
+while (n) {
+    n &= n - 1;
+    count++;
+}
+
+// Lowest set bit
+const lowest = n & (-n);
+
+// Clear lowest set bit
+n & (n - 1)
+```
+
+```java
+// Check if bit at position i is set
+(n >> i) & 1
+
+// Set bit at position i
+n | (1 << i)
+
+// Clear bit at position i
+n & ~(1 << i)
+
+// Toggle bit at position i
+n ^ (1 << i)
+
+// Check if power of two
+n > 0 && (n & (n - 1)) == 0
+
+// Count set bits (Brian Kernighan)
+int count = 0;
+while (n != 0) {
+    n &= n - 1;
+    count++;
+}
+
+// Lowest set bit
+int lowest = n & (-n);
+
+// Clear lowest set bit
+n & (n - 1)
+```
+
 ```python
 # Check if bit at position i is set
 (n >> i) & 1
@@ -51,6 +111,26 @@ n & (n - 1)
 ### Classic Example Walkthrough: Single Number (LC 136)
 
 **Problem:** Every element appears twice except one. Find the single one. Must use O(1) extra space.
+
+```typescript
+function singleNumber(nums: number[]): number {
+    let result = 0;
+    for (const num of nums) {
+        result ^= num;
+    }
+    return result;
+}
+```
+
+```java
+public int singleNumber(int[] nums) {
+    int result = 0;
+    for (int num : nums) {
+        result ^= num;
+    }
+    return result;
+}
+```
 
 ```python
 def singleNumber(nums):
