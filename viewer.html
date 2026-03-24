@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading...</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.7;
+      color: #1a1a2e;
+      background: #f8f9fa;
+      padding: 0;
+    }
+    .top-bar {
+      position: sticky;
+      top: 0;
+      background: #1a1a2e;
+      color: #fff;
+      padding: 12px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .top-bar a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    .top-bar a:hover { color: #fff; }
+    .top-bar .title {
+      font-weight: 600;
+      font-size: 16px;
+      color: #e2e8f0;
+    }
+    .top-bar .sep { color: #475569; }
+    .content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 32px 80px;
+      background: #fff;
+      min-height: calc(100vh - 48px);
+      box-shadow: 0 0 40px rgba(0,0,0,0.04);
+    }
+    .content h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+      padding-bottom: 12px;
+      border-bottom: 3px solid #6366f1;
+    }
+    .content h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .content h3 {
+      font-size: 19px;
+      font-weight: 600;
+      color: #334155;
+      margin-top: 28px;
+      margin-bottom: 8px;
+    }
+    .content h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #475569;
+      margin-top: 20px;
+      margin-bottom: 6px;
+    }
+    .content p { margin-bottom: 14px; }
+    .content ul, .content ol {
+      margin-bottom: 14px;
+      padding-left: 24px;
+    }
+    .content li { margin-bottom: 6px; }
+    .content li > ul, .content li > ol { margin-top: 6px; margin-bottom: 0; }
+    .content strong { color: #1e293b; }
+    .content code {
+      background: #f1f5f9;
+      color: #e11d48;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+    }
+    .content pre {
+      background: #1e293b;
+      border-radius: 8px;
+      padding: 20px;
+      overflow-x: auto;
+      margin-bottom: 16px;
+      margin-top: 8px;
+    }
+    .content pre code {
+      background: none;
+      color: #e2e8f0;
+      padding: 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .content th {
+      background: #f1f5f9;
+      font-weight: 600;
+      text-align: left;
+      padding: 10px 12px;
+      border: 1px solid #e2e8f0;
+      color: #1e293b;
+    }
+    .content td {
+      padding: 8px 12px;
+      border: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+    .content tr:nth-child(even) { background: #fafbfc; }
+    .content blockquote {
+      border-left: 4px solid #6366f1;
+      background: #f0f0ff;
+      padding: 12px 20px;
+      margin-bottom: 16px;
+      border-radius: 0 8px 8px 0;
+      color: #334155;
+    }
+    .content hr {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 32px 0;
+    }
+    .content img { max-width: 100%; border-radius: 8px; }
+    .content input[type="checkbox"] {
+      margin-right: 8px;
+      transform: scale(1.2);
+      accent-color: #6366f1;
+    }
+    .sr-tag {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .error {
+      text-align: center;
+      padding: 60px 20px;
+      color: #64748b;
+    }
+    .error h2 { border: none; color: #94a3b8; }
+    @media (max-width: 768px) {
+      .content { padding: 24px 16px 60px; }
+      .content h1 { font-size: 24px; }
+      .content h2 { font-size: 20px; }
+      .top-bar { padding: 12px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <a href="index.html">Home</a>
+    <span class="sep">/</span>
+    <span class="title" id="breadcrumb">Loading...</span>
+  </div>
+  <div class="content" id="content">
+    <div class="error">
+      <h2>Loading...</h2>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/protobuf.min.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const file = params.get('file');
+
+    if (!file) {
+      document.getElementById('content').innerHTML = '<div class="error"><h2>No file specified</h2><p><a href="index.html">Go back to dashboard</a></p></div>';
+      document.getElementById('breadcrumb').textContent = 'Error';
+    } else {
+      const fileName = file.split('/').pop().replace('.md', '').replace(/^\d+-/, '').replace(/-/g, ' ');
+      const breadcrumb = file.replace('.md', '').replace(/\//g, ' / ').replace(/-/g, ' ');
+      document.getElementById('breadcrumb').textContent = breadcrumb;
+      document.title = fileName.charAt(0).toUpperCase() + fileName.slice(1) + ' -- Interview Prep';
+
+      marked.setOptions({
+        highlight: function(code, lang) {
+          if (lang && hljs.getLanguage(lang)) {
+            return hljs.highlight(code, { language: lang }).value;
+          }
+          return hljs.highlightAuto(code).value;
+        },
+        gfm: true,
+        breaks: false
+      });
+
+      fetch(file)
+        .then(r => {
+          if (!r.ok) throw new Error('File not found');
+          return r.text();
+        })
+        .then(md => {
+          let html = marked.parse(md);
+          // Make checkboxes interactive
+          html = html.replace(/<li><input disabled="" type="checkbox">/g, '<li><input type="checkbox">');
+          // Highlight [SR] tags
+          html = html.replace(/\[SR\]/g, '<span class="sr-tag">SR</span>');
+          document.getElementById('content').innerHTML = html;
+          // Re-highlight any missed code blocks
+          document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+        })
+        .catch(err => {
+          document.getElementById('content').innerHTML =
+            `<div class="error"><h2>Could not load file</h2><p>${file}</p><p>${err.message}</p><p><a href="index.html">Go back to dashboard</a></p></div>`;
+        });
+    }
+  </script>
+</body>
+</html>
